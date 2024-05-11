@@ -35,17 +35,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-  SonarScanner:
-    needs: build
-    runs-on: ubuntu-latest 
-    steps:
-    
-      - name: Setup Java JDK
-        uses: actions/setup-java@v4.2.1
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-    
       - name: Analisis SonarCloud
         run: |
           mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
@@ -61,12 +50,7 @@ jobs:
         #uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         #with:
           #scanMetadataReportFile: target/sonar/report-task.txt
-          
-  Contenedor:
-     needs: SonarScanner
-     runs-on: self-hosted
-
-     steps:      
+       
       - name: Docker Login
         uses: docker/login-action@v3.1.0
         with:
@@ -86,7 +70,7 @@ jobs:
           docker push chgodoy73/microserviciojava-devops-v7:latest
 
   deploy:
-    needs: Contenedor
+    needs: build
     runs-on: self-hosted
 
     steps:
